@@ -18,10 +18,6 @@ void gdextension_initialize(ModuleInitializationLevel p_level)
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE)
 	{
 		ClassDB::register_class<MyNode>();
-		ClassDB::register_class<MySingleton>();
-
-		_my_singleton = memnew(MySingleton);
-		Engine::get_singleton()->register_singleton("MySingleton", MySingleton::get_singleton());
 	}
 }
 
@@ -29,16 +25,15 @@ void gdextension_terminate(ModuleInitializationLevel p_level)
 {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE)
 	{
-		Engine::get_singleton()->unregister_singleton("MySingleton");
-		memdelete(_my_singleton);
+		return;
 	}
 }
 
 extern "C"
 {
-	GDExtensionBool GDE_EXPORT gdextension_init(const GDExtensionInterface *p_interface, GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization)
-	{
-		godot::GDExtensionBinding::InitObject init_obj(p_interface, p_library, r_initialization);
+	// Initialization.
+	GDExtensionBool GDE_EXPORT example_library_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, const GDExtensionClassLibraryPtr p_library, GDExtensionInitialization* r_initialization) {
+		godot::GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
 
 		init_obj.register_initializer(gdextension_initialize);
 		init_obj.register_terminator(gdextension_terminate);
