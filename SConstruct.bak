@@ -10,7 +10,7 @@ env.Append(CPPPATH=["src/"])
 env.Append(CPPPATH=["kdtree-cpp"])
 sources = Glob("src/*.cpp")
 
-kdtree_sources = ["kdtree-cpp/kdtree.cpp"]
+kdtree_sources = ["kdtree-cpp/*.cpp"]
 sources += kdtree_sources
 
 # Find gdextension path even if the directory or extension is renamed (e.g. project/addons/example/example.gdextension).
