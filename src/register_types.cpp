@@ -7,11 +7,8 @@
 #include <godot_cpp/godot.hpp>
 
 #include "my_node.hpp"
-#include "my_singleton.hpp"
 
 using namespace godot;
-
-static MySingleton *_my_singleton;
 
 void gdextension_initialize(ModuleInitializationLevel p_level)
 {
@@ -32,7 +29,7 @@ void gdextension_terminate(ModuleInitializationLevel p_level)
 extern "C"
 {
 	// Initialization.
-	GDExtensionBool GDE_EXPORT example_library_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, const GDExtensionClassLibraryPtr p_library, GDExtensionInitialization* r_initialization) {
+	GDExtensionBool GDE_EXPORT gdextension_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, const GDExtensionClassLibraryPtr p_library, GDExtensionInitialization* r_initialization) {
 		godot::GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
 
 		init_obj.register_initializer(gdextension_initialize);

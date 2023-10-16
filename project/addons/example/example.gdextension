@@ -2,6 +2,8 @@
 
 entry_symbol = "gdextension_init"
 
+compatibility_minimum = "4.1"
+
 [libraries]
 
 macos.debug = "bin/libexample.macos.debug.framework"
