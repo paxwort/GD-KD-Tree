@@ -6,7 +6,3 @@
 script = ExtResource("1_lih0m")
 
 [node name="GDKDTree" type="GDKDTree" parent="."]
-
-[node name="Node1" type="Node3D" parent="."]
-
-[node name="Node2" type="Node3D" parent="."]

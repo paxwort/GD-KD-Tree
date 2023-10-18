@@ -7,8 +7,7 @@ using namespace godot;
 
 void GDKDTree::_bind_methods()
 {
-	ClassDB::bind_method(D_METHOD("initialize_tree", "p_points"), &GDKDTree::initialize_tree);
-	ClassDB::bind_method(D_METHOD("nearest_neighbour", "p_position"), &GDKDTree::nearest_neighbour);
+	ClassDB::bind_method(D_METHOD("initialize_tree", "p_points", "p_data"), &GDKDTree::initialize_tree);
 	ClassDB::bind_method(D_METHOD("k_nearest_neighbours", "p_position", "p_k"), &GDKDTree::k_nearest_neighbours);
 }
 
@@ -31,40 +30,61 @@ void GDKDTree::_process(double delta)
 {
 }
 
-void GDKDTree::initialize_tree(PackedVector3Array p_points)
+void GDKDTree::initialize_tree(const PackedVector3Array &p_points, const godot::Array &p_data)
 {
+	if (p_data.size() != p_points.size()) {
+		//TODO: Throw error
+		return;
+	}
+
 	if (tree != nullptr) {
 		delete tree;
 	}
+	data = p_data;
 
 	Kdtree::KdNodeVector nodes;
 	for (int i = 0; i < p_points.size(); i++) {
 		Vector3 vector3Element = p_points[i];
-		std::vector<double> point = vector3_to_double_vector(&vector3Element);
-			nodes.push_back(Kdtree::KdNode(point));
+		std::vector<double> point = vector3_to_double_vector(vector3Element);
+		Kdtree::KdNode node = Kdtree::KdNode(point);
+		node.index = i;
+		nodes.push_back(node);
 	}
 	tree = new Kdtree::KdTree(&nodes);
 }
 
-Vector3 GDKDTree::nearest_neighbour(Vector3 p_position)
+Ref<GDKDQueryResult> GDKDTree::k_nearest_neighbours(const Vector3& p_position, const int& p_k)
 {
-	return GDKDTree::k_nearest_neighbours(p_position, 1)[0];
-}
-
-PackedVector3Array GDKDTree::k_nearest_neighbours(Vector3 p_position, int p_k)
-{
+	Ref<GDKDQueryResult> query_result(memnew(GDKDQueryResult));
+	
 	Kdtree::KdNodeVector result;
-	Kdtree::CoordPoint coord = vector3_to_double_vector(&p_position);
+	Kdtree::CoordPoint coord = vector3_to_double_vector(p_position);
+
+	godot::Array arr;
+	godot::PackedVector3Array points;
 	tree->k_nearest_neighbors(coord, p_k, &result);
-	return kdNodeVector_to_packedVector3(&result);
+	
+	for (int i = 0; i < result.size(); i++) {
+		Kdtree::KdNode node = result[i];
+		if ((node.index >= 0) && (node.index < data.size())) {
+			Vector3 point = kdNode_to_Vector3(&node);
+			points.push_back(point);
+			arr.append(data[node.index]);
+		}
+	}
+	
+	query_result->set_points(points);
+	query_result->set_data(arr);
+	
+	return query_result;
 }
 
-std::vector<double> GDKDTree::vector3_to_double_vector(Vector3* p_vector)
+std::vector<double> GDKDTree::vector3_to_double_vector(const Vector3 &p_vector)
 {
 	std::vector<double> point(3);
-	point[0] = p_vector->x;
-	point[1] = p_vector->y;
-	point[2] = p_vector->z;
+	point[0] = p_vector.x;
+	point[1] = p_vector.y;
+	point[2] = p_vector.z;
 	return point;
 }
 

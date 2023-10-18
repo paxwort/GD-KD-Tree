@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
+    "\\godot-cpp",
     "\\src"
   ],
-  "SelectedNode": "\\src\\pax_r_tree.hpp",
+  "SelectedNode": "\\src\\gd_kd_query_result.hpp",
   "PreviewInSolutionExplorer": false
 }

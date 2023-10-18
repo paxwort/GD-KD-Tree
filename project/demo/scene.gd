@@ -1,9 +1,9 @@
 extends Node
 
 func _ready() -> void:
-	print("Hello GDScript!")
-	var arr = PackedVector3Array([
-	Vector3(0, 1, 0),
+
+	var v_arr = PackedVector3Array([
+	Vector3(0.0, 1.0, 0.0),
 	Vector3(5.2, 1, 6),
 	Vector3(2.3, 4.7, 1.1),
 	Vector3(-3.5, 2.2, 8.9),
@@ -22,8 +22,50 @@ func _ready() -> void:
 	Vector3(-3.0, -3.0, -3.0),
 	Vector3(0.5, 0.5, 0.5),
 	Vector3(-1.0, 0.0, 1.0),
-	Vector3(7.0, 3.5, 1.8)
-])
-	$GDKDTree.initialize_tree(arr)
-	var arr2 : PackedVector3Array = $GDKDTree.k_nearest_neighbours(Vector3(0,0,0), 5)
-	print("kn:%s"%arr2)
+	Vector3(7.0, 3.5, 1.8)])
+	
+	var data_arr = [
+	"$Node1",
+	$Node2,
+	Vector3(0,1,0),
+	Basis.IDENTITY,
+	$Node1,
+	$Node2,
+	$Node1,
+	$Node2,
+	$Node1,
+	$Node2,
+	$Node1,
+	$Node2,
+	$Node1,
+	$Node2,
+	$Node1,
+	$Node1,
+	$Node2,
+	$Node1,
+	$Node2,
+	$Node1
+	]
+	var target_vector = Vector3(0.0, 1.0, 0.0)
+	#kd search for closest
+	
+	var init_start = Time.get_ticks_usec()
+	$GDKDTree.initialize_tree(v_arr, data_arr)
+	var query_start = Time.get_ticks_usec()
+	var query = $GDKDTree.k_nearest_neighbours(target_vector, 20)
+	var query_end = Time.get_ticks_usec()
+	
+	#naive search for closest
+	var naive_start = Time.get_ticks_usec()
+	
+	var best : Vector3
+	var best_data
+	var best_len : float = INF
+	for i in range(0, v_arr.size()):
+		if (target_vector - v_arr[i]).length() < best_len:
+			best = v_arr[i]
+			best_data = data_arr[i]
+	
+	var naive_end = Time.get_ticks_usec()
+	
+	print("init: %s\nquery: %s\nnaive:%s"%[query_start - init_start, query_end - query_start, naive_end - naive_start])

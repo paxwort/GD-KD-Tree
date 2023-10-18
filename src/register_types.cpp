@@ -7,6 +7,7 @@
 #include <godot_cpp/godot.hpp>
 
 #include "gd_kd_tree.hpp"
+#include "gd_kd_query_result.hpp"
 
 using namespace godot;
 
@@ -15,6 +16,7 @@ void gdextension_initialize(ModuleInitializationLevel p_level)
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE)
 	{
 		ClassDB::register_class<GDKDTree>();
+		ClassDB::register_class<GDKDQueryResult>();
 	}
 }
 
